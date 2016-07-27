@@ -8,4 +8,6 @@ if __name__ == "__main__":
     d.start()
     print CrawlerForXueqiu
     c = CrawlerForXueqiu()
+    c.get_hist_data("600000")
+    c.get_hist_data("002174")
     #c.get_hist_data("600000")

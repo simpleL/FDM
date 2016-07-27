@@ -4,6 +4,7 @@ import ConfigParser
 import datetime
 import json
 import os
+import pandas
 import requests
 import time
 
@@ -35,11 +36,11 @@ class CrawlerForXueqiu:
             os.makedirs(path)
 
         self.__cache_index_file = "%s/cache_index"%(path)
-        if os.path.exists(self.__cache_index_file):
-            cache_index_file = open(self.__cache_index_file)
-            cache_index = cache_index_file.read()
+        cache_index_file = open(self.__cache_index_file, "r")
+        cache_index = cache_index_file.read()
+        cache_index_file.close()
+        if cache_index:
             self.__cache_index = json.loads(cache_index)
-            cache_index_file.close()
         else:
             self.__cache_index = {}
         print self.__cache_index
@@ -47,28 +48,55 @@ class CrawlerForXueqiu:
     def __convert_date(self, date):
         return date.replace("/", "-")
 
+    def __replace_keys(self, pd):
+        # TODO
+        return pd
+
+    def __update_cache_index(self, code, date):
+        self.__cache_index[code] = {"update_time": date}
+        json_str = json.dumps(self.__cache_index)
+        cache_index_file = open(self.__cache_index_file, "w")
+        cache_index_file.write(json_str)
+        cache_index_file.flush()
+        cache_index_file.close()
+
     def get_hist_data(self, code, is_index = False, use_cache = True):
         if not is_index:
             if code[0] == '6':
                 code = "SH%s"%(code)
             else:
-                code = "SZ%S"%(code)
+                code = "SZ%s"%(code)
 
         needs_update = True
-        cache = self.__cache_index[code]
-        if cache:
+        if self.__cache_index.has_key(code):
+            cache = self.__cache_index[code]
             if use_cache:
                 needs_update = False
             else:
                 update_time = cache.update_time;
                 today = datetime.date.fromtimestamp(time.time()).strftime("%Y-%m-%d")
-                needs_update = (today == updatetime)
+                needs_update = (today == update_time)
         else:
             cache = {}
 
+        result = pandas.DataFrame()
+        csv_path = "%s/%s.csv"%(self.__cache_dir, code)
         if needs_update:
             url = self.__hist_url%(code)
             r = requests.get(url, headers = self.__headers)
+            if r.status_code == 200:
+                csv = r.content
+                csv_file = open(csv_path, "w")
+                csv_file.write(csv)
+                csv_file.flush()
+                csv_file.close()
 
+                result = pandas.read_csv(csv_path)
+                date = result.date[len(result.date) - 1]
+                self.__update_cache_index(code, date)
+            else:
+                print "failed getting %s with status_code %d"%(code, r.status_code)
+        else:
+            result = pandas.read_csv(csv_path)
 
-
+        return self.__replace_keys(result)
