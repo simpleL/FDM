@@ -43,7 +43,6 @@ class CrawlerForXueqiu:
             self.__cache_index = json.loads(cache_index)
         else:
             self.__cache_index = {}
-        print self.__cache_index
 
     def __convert_date(self, date):
         return date.replace("/", "-")
