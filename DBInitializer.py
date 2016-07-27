@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import MySQLdb
 import ConfigParser
+import MySQLdb
+import os
 
 class DBInitializer:
     def __init__(self):
+        conf_path = "%s/FDM/FDM.conf"%(os.getcwd())
         self.__conf = ConfigParser.ConfigParser()
-        self.__conf.read("FDM.conf")
+        self.__conf.read(conf_path)
 
         self.__conn = None
 
@@ -37,7 +39,3 @@ class DBInitializer:
         if self.__conn:
             self.__conn.close()
 
-if __name__ == "__main__":
-    e = DBInitializer()
-    d = DBInitializer()
-    d.start()
