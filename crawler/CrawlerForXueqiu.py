@@ -47,9 +47,26 @@ class CrawlerForXueqiu:
     def __convert_date(self, date):
         return date.replace("/", "-")
 
-    def __replace_keys(self, pd):
-        # TODO
-        return pd
+    def __process(self, pd):
+        # remove 0s
+        dates = []
+        opens = []
+        closes = []
+        lows = []
+        highs = []
+        amounts = []
+        for i in range(0, len(pd)):
+            if pd.open[i] < 0.01:
+                continue;
+            dates.append(pd.date[i])
+            opens.append(pd.open[i])
+            closes.append(pd.close[i])
+            lows.append(pd.low[i])
+            highs.append(pd.high[i])
+            amounts.append(pd.volume[i])
+
+        return pandas.DataFrame({"date": dates, "open": opens, "close": closes,
+                                 "low": lows, "high": highs, "amount": amounts})
 
     def __update_cache_index(self, code, date):
         self.__cache_index[code] = {"update_time": date}
@@ -98,4 +115,4 @@ class CrawlerForXueqiu:
         else:
             result = pandas.read_csv(csv_path)
 
-        return self.__replace_keys(result)
+        return self.__process(result)

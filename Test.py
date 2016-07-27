@@ -8,6 +8,8 @@ if __name__ == "__main__":
     d.start()
     print CrawlerForXueqiu
     c = CrawlerForXueqiu()
-    c.get_hist_data("600000")
+    pf = c.get_hist_data("600000")
+    print pf
+    print pf.query("open < 0.01")
     c.get_hist_data("002174")
     #c.get_hist_data("600000")
