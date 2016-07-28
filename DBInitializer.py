@@ -3,6 +3,9 @@
 import ConfigParser
 import MySQLdb
 import os
+import tushare
+
+from crawler import CrawlerForXueqiu
 
 class DBInitializer:
     def __init__(self):
@@ -33,7 +36,24 @@ class DBInitializer:
         self.__do_init(cursor)
     
     def __do_init(self, cursor):
-        print("do_init")
+        self.__maybe_init_stocks_table(cursor)
+        self.__maybe_init_bonus_table(cursor)
+        self.__maybe_init_market_table(cursor)
+
+    def __maybe_init_stocks_table(self, cursor):
+        print "maybe_init_stocks_table"
+
+    def __maybe_init_bonus_table(self, cursor):
+        print "maybe_init_bonus_table"
+
+    def __maybe_init_market_table(self, cursor):
+        if cursor.execute('show tables like "market"') == 0:
+            print "no market"
+        
+        c = CrawlerForXueqiu()
+        c.get_hist_data("000021")
+        c.get_hist_data("000022")
+
 
     def __del__(self):
         if self.__conn:

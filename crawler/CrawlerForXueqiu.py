@@ -84,7 +84,8 @@ class CrawlerForXueqiu:
                 code = "SZ%s"%(code)
 
         needs_update = True
-        if self.__cache_index.has_key(code):
+        csv_path = "%s/%s.csv"%(self.__cache_dir, code)
+        if self.__cache_index.has_key(code) and os.path.exists(csv_path):
             cache = self.__cache_index[code]
             if use_cache:
                 needs_update = False
@@ -96,7 +97,6 @@ class CrawlerForXueqiu:
             cache = {}
 
         result = pandas.DataFrame()
-        csv_path = "%s/%s.csv"%(self.__cache_dir, code)
         if needs_update:
             url = self.__hist_url%(code)
             r = requests.get(url, headers = self.__headers)
@@ -108,8 +108,11 @@ class CrawlerForXueqiu:
                 csv_file.close()
 
                 result = pandas.read_csv(csv_path)
-                date = result.date[len(result.date) - 1]
-                self.__update_cache_index(code, date)
+                if len(result.date) > 0:
+                    date = result.date[len(result.date) - 1]
+                    self.__update_cache_index(code, date)
+                else:
+                    print "%s has no data"%(code)
             else:
                 print "failed getting %s with status_code %d"%(code, r.status_code)
         else:
