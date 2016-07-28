@@ -1,0 +1,46 @@
+停牌股票没有抓取
+
+世纪游轮11月19号数据不对
+
+分红送配只能自己取了
+http://xueqiu.com/stock/f10/bonus.json?symbol=SH600036&page=1&size=30&_=1453296025359
+
+http://q.stock.sohu.com/hisHq?code=cn_600000&start=19991008&end=20160215&stat=1&order=D&period=d&callback=historySearchHandler&rt=jsonp&r=0.2656152055133134&0.0730343023315072
+
+create table market(id int primary key not null auto_increment, code char(8) not null, date date, open decimal(10, 2), close decimal(10, 2), low decimal(10, 2), high decimal(10, 2), volume bigint, amount bigint);
+
+create index market_code_index on market(code(8));
+create index market_date_index on market(date);
+
+create table bonus (id int primary key not null auto_increment, code char(8) not null, announce_date date, stat_right_date date, exright_date date, dividend decimal(20, 10), bonus_stock decimal(20, 10), tranadd_stock decimal(20, 10));
+create index bonus_code_index on bonus(code);
+
+list
+0 -> announce_date
+6 -> stat_right_date
+5 -> exright_date
+3 -> dividend
+1 -> bonus_stock
+2 -> tranadd_stock
+4 -> 实施
+
+Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Encoding:gzip, deflate, sdch
+Accept-Language:zh-CN,zh;q=0.8
+Cache-Control:max-age=0
+Connection:keep-alive
+Host:xueqiu.com
+Upgrade-Insecure-Requests:1
+User-Agent:Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36
+
+上证从1990-12-19开始
+
+http://q.stock.sohu.com/feedback.html
+你们的历史行情数据有些欠缺：
+000156,000506,000517,000529,000620,000631,000638,000672,000688,000693,000719,000732,000863,600094,600187,600225,600242,600259,600681,600705,600734,600854
+
+000038 2010年的数据
+600489 2006年6月14日单日跌去49%？
+价格大于500：
+000901，000902，000903，000905，000906，000908，000910，000911，
+000913，000915，000916，000918，000919，000920，000921，000922
