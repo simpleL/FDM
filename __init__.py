@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from DBInitializer import DBInitializer
+from db_initializer import DBInitializer

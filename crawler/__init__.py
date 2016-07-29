@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from CrawlerForXueqiu import CrawlerForXueqiu
+from crawler_for_xueqiu import CrawlerForXueqiu

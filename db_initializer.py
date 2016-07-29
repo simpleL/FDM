@@ -51,8 +51,8 @@ class DBInitializer:
             print "no market"
         
         c = CrawlerForXueqiu()
-        c.get_hist_data("000021")
-        c.get_hist_data("000022")
+        c.get_hist_data("000039", use_cache = False)
+        c.get_hist_data("000040")
 
 
     def __del__(self):

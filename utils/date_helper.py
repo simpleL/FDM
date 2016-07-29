@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
 
 class DateHelper:
-    def getCurrentTradeDay(date):
+    def getCurrentTradeDay(cls, date):
         return date

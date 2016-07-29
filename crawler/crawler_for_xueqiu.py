@@ -90,9 +90,10 @@ class CrawlerForXueqiu:
             if use_cache:
                 needs_update = False
             else:
-                update_time = cache.update_time;
+                update_time = cache["update_time"];
                 today = datetime.date.fromtimestamp(time.time()).strftime("%Y-%m-%d")
-                needs_update = (today == update_time)
+                trade_day = DateHelper().getCurrentTradeDay(today)
+                needs_update = (trade_day != update_time)
         else:
             cache = {}
 
