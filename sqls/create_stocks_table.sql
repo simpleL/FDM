@@ -1,0 +1,1 @@
+create table stock_information (id int NOT NULL AUTO_INCREMENT, code char(10), name char(20), industry char(40), area char(30), floating double, total double, pe double, pb double, PRIMARY KEY (id))

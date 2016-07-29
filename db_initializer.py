@@ -6,6 +6,7 @@ import os
 import tushare
 
 from crawler import CrawlerForXueqiu
+from collector import Collector
 
 class DBInitializer:
     def __init__(self):
@@ -30,7 +31,7 @@ class DBInitializer:
         try:
             cursor.execute("use %s"%(db))
         except:
-            cursor.execute("create database %s"%(db))
+            cursor.execute("create database %s default character set utf8"%(db))
             cursor.execute("use %s"%(db))
 
         self.__do_init(cursor)
@@ -47,12 +48,15 @@ class DBInitializer:
         print "maybe_init_bonus_table"
 
     def __maybe_init_market_table(self, cursor):
-        if cursor.execute('show tables like "market"') == 0:
-            print "no market"
+        if cursor.execute('show tables like "stock_information"') == 0:
+            sql_path = "%s/FDM/sqls/create_stocks_table.sql"%(os.getcwd())
+            sql_file = open(sql_path, "r")
+            create_table_sql = sql_file.read()
+            sql_file.close()
+            cursor.execute(create_table_sql)
         
-        c = CrawlerForXueqiu()
-        c.get_hist_data("000039", use_cache = False)
-        c.get_hist_data("000040")
+        c = Collector()
+        c.collect_stock_information()
 
 
     def __del__(self):
