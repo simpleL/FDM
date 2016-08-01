@@ -42,12 +42,6 @@ class DBInitializer:
         self.__maybe_init_market_table(cursor)
 
     def __maybe_init_stocks_table(self, cursor):
-        print "maybe_init_stocks_table"
-
-    def __maybe_init_bonus_table(self, cursor):
-        print "maybe_init_bonus_table"
-
-    def __maybe_init_market_table(self, cursor):
         if cursor.execute('show tables like "stock_information"') == 0:
             sql_path = "%s/FDM/sqls/create_stocks_table.sql"%(os.getcwd())
             sql_file = open(sql_path, "r")
@@ -57,6 +51,22 @@ class DBInitializer:
         
         c = Collector()
         c.collect_stock_information()
+
+    def __maybe_init_bonus_table(self, cursor):
+        print "maybe_init_bonus_table"
+
+    def __maybe_init_market_table(self, cursor):
+        if cursor.execute('show tables like "market"') == 0:
+            sql_path = "%s/FDM/sqls/create_market_table.sql"%(os.getcwd())
+            sql_file = open(sql_path, "r")
+            create_table_sql = sql_file.read()
+            sql_file.close()
+            cursor.execute(create_table_sql)
+
+            CrawlerForXueqiu xueqiu = CrawlerForXueqiu()
+            
+            
+
 
 
     def __del__(self):

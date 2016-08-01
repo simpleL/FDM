@@ -1,0 +1,1 @@
+create table market(id int primary key not null auto_increment, code char(8) not null, date date, open decimal(10, 2), close decimal(10, 2), low decimal(10, 2), high decimal(10, 2), volume bigint);create index market_code_index on market(code(8));create index market_date_index on market(date);
