@@ -62,8 +62,8 @@ class DBInitializer:
             sql_file.close()
             cursor.execute(create_bonus_sql)
 
-        c = Collector()
-        c.collect_bonus()
+            c = Collector()
+            c.collect_bonus()
 
     def __maybe_init_market_table(self, cursor):
         if cursor.execute('show tables like "market"') == 0:

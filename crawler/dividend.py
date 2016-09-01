@@ -2,15 +2,15 @@
 
 import datetime
 import requests
-import lxml.html
+import lxml.html.soupparser as sp
 import pandas
 import HTMLParser
 
 def get_dividend(code):
     request_url = "http://money.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/{code}.phtml".format(code = code)
-    #r = requests.get(request_url)
+    r = requests.get(request_url)
     
-    html = lxml.html.parse(request_url)
+    html = sp.fromstring(r.content)
     dom = html.xpath("//table[@id=\"sharebonus_1\"]/tbody")
     
     res = pandas.DataFrame({"announce_date": [], "stat_right_date": [],
