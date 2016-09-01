@@ -36,43 +36,41 @@ def get_dividend(code):
             3 -> dividend
             1 -> bonus_stock
             2 -> tranadd_stock
-            4 -> ʵʩ
             """
             index = count % 9
             if index == 0:
-                if dict.has_key("act") and dict["act"] == u"ʵʩ".encode("utf-8"):
-                    del dict["act"]
+                if len(dict) == 6:
                     dict["code"] = code
                     res = res.append(dict, ignore_index = True)
                 dict = {}
-                date = "1900-01-01"
-                if element.text != "--":
+                if element.text and len(element.text) == 10:
                     date = element.text
-                dict["announce_date"] = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+                    dict["announce_date"] = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+                else:
+                    dict = {}
             elif index == 1:
                 dict["bonus_stock"] = element.text
             elif index == 2:
                 dict["tranadd_stock"] = element.text
             elif index == 3:
                 dict["dividend"] = element.text
-            elif index == 4:
-                dict["act"] = element.text.encode("gbk")
                 
             elif index == 5:
-                date = "1900-01-01"
-                if element.text != "--":
+                if element.text and len(element.text) == 10:
                     date = element.text
-                dict["exright_date"] = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+                    dict["exright_date"] = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+                else:
+                    dict = {}
             elif index == 6:
-                date = "1900-01-01"
-                if element.text != "--":
+                if element.text and len(element.text) == 10:
                     date = element.text
-                dict["stat_right_date"] = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+                    dict["stat_right_date"] = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+                else:
+                    dict = {}
             count = count + 1
     
-    if dict.has_key("act") and dict["act"] == u"ʵʩ".encode("utf-8"):
-        del dict["act"]
+    if len(dict) == 6:
         dict["code"] = code
         res = res.append(dict, ignore_index = True)
-    
+
     return res

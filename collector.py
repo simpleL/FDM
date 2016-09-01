@@ -5,12 +5,15 @@ import threading
 import tushare
 import MySQLdb
 
-from store import *
+from store import Store
 from .utils import StringUtils
 from crawler.dividend import *
 from crawler.market import *
 
 class Collector:
+    def __init__(self):
+        self.store = Store();
+
     def collect_trades(self, conn, code, start, end):
         sql_string = "insert into market (code, date, open, close, low, high, volume, amount) values (%s, %s, %s, %s, %s, %s, %s, %s)"
 
@@ -113,7 +116,7 @@ class Collector:
         conn.close()
     
     def collect_bonus(self):
-        codes = get_all_stocks()
+        codes = self.store.get_all_stocks()
     
         conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
         cursor = conn.cursor()
@@ -125,7 +128,7 @@ class Collector:
             server_stock_bonus = server_stock_bonus.set_index("announce_date")
             server_stock_bonus = server_stock_bonus.sort_index()
         
-            stock_bonus = get_bonus(conn, code)
+            stock_bonus = self.store.get_bonus(conn, code)
             stock_bonus = stock_bonus.set_index("announce_date")
             stock_bonus = stock_bonus.sort_index()
         

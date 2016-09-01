@@ -29,7 +29,7 @@ def get_h_data(code, start, end):
             dict["low"] = daily[5].encode("utf8")
             dict["high"] = daily[6].encode("utf8")
             dict["volume"] = int(float(daily[7].encode("utf8")) * 100)
-            dict["amount"] = int(float(daily[8].encode("utf8")) * 10000)
+            #dict["amount"] = int(float(daily[8].encode("utf8")) * 10000)
             
             trade.append(dict)
     

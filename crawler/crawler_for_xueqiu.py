@@ -54,7 +54,7 @@ class CrawlerForXueqiu:
         closes = []
         lows = []
         highs = []
-        amounts = []
+        volumes = []
         for i in range(0, len(pd)):
             if pd.open[i] < 0.01:
                 continue;
@@ -63,10 +63,10 @@ class CrawlerForXueqiu:
             closes.append(pd.close[i])
             lows.append(pd.low[i])
             highs.append(pd.high[i])
-            amounts.append(pd.volume[i])
+            volumes.append(pd.volume[i])
 
         return pandas.DataFrame({"date": dates, "open": opens, "close": closes,
-                                 "low": lows, "high": highs, "amount": amounts})
+                                 "low": lows, "high": highs, "volume": volumes})
 
     def __update_cache_index(self, code, date):
         self.__cache_index[code] = {"update_time": date}

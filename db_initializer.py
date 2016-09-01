@@ -7,6 +7,7 @@ import tushare
 
 from crawler import CrawlerForXueqiu
 from collector import Collector
+from store import Store
 
 class DBInitializer:
     def __init__(self):
@@ -48,12 +49,21 @@ class DBInitializer:
             create_table_sql = sql_file.read()
             sql_file.close()
             cursor.execute(create_table_sql)
+
+            c = Collector()
+            c.collect_stock_information()
         
-        c = Collector()
-        c.collect_stock_information()
 
     def __maybe_init_bonus_table(self, cursor):
-        print "maybe_init_bonus_table"
+        if cursor.execute('show tables like "bonus"') == 0:
+            sql_path = "%s/FDM/sqls/create_bonus_table.sql"%(os.getcwd())
+            sql_file = open(sql_path, "r")
+            create_bonus_sql = sql_file.read()
+            sql_file.close()
+            cursor.execute(create_bonus_sql)
+
+        c = Collector()
+        c.collect_bonus()
 
     def __maybe_init_market_table(self, cursor):
         if cursor.execute('show tables like "market"') == 0:
@@ -63,9 +73,7 @@ class DBInitializer:
             sql_file.close()
             cursor.execute(create_table_sql)
 
-            CrawlerForXueqiu xueqiu = CrawlerForXueqiu()
-            
-            
+            c = CrawlerForXueqiu()
 
 
 
