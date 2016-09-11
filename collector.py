@@ -5,21 +5,37 @@ import threading
 import tushare
 import MySQLdb
 
-from store import Store
 from .utils import StringUtils
 from crawler.dividend import *
+from crawler.crawler_for_xueqiu import *
 from crawler.market import *
+from consts import *
+from store import Store
+
+def _collect_internal(collector, start_date, end_date, codes, source):
+    conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant")
+
+    for code in codes:
+        collector.collect_trades(conn, code, start_date, end_date, source)
+    
+    conn.close()
 
 class Collector:
     def __init__(self):
         self.store = Store();
+        self.xueqiu = CrawlerForXueqiu()
 
-    def collect_trades(self, conn, code, start, end):
-        sql_string = "insert into market (code, date, open, close, low, high, volume, amount) values (%s, %s, %s, %s, %s, %s, %s, %s)"
+    def collect_trades(self, conn, code, start, end, source):
+        sql_string = "insert into market (code, date, open, close, low, high, volume) values (%s, %s, %s, %s, %s, %s, %s)"
 
-        stock_data = get_h_data(code, start, end);
+        stock_data = None;
+        if source == SOHU:
+            stock_data = get_h_data(code, start, end)
+        elif source == XUEQIU:
+            stock_data = self.xueqiu.get_h_data(code, start, end)
+        
         if (stock_data is None):
-            print code
+            print "%s has no data"%(code)
         else:
             cursor = conn.cursor()
             list = [];
@@ -27,24 +43,16 @@ class Collector:
                 param = (code, stock_data.index[i],
                          stock_data.open[i], stock_data.close[i],
                          stock_data.low[i], stock_data.high[i],
-                         stock_data.volume[i], stock_data.amount[i])
+                         stock_data.volume[i])
                 list.append(param)
             cursor.executemany(sql_string, list)
             conn.commit()
             cursor.close()
-        
-    def collect_internal(self, start_date, end_date, codes):
-        conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant")
-    
-        for code in codes:
-            collect_trades(conn, code, start_date, end_date)
-    
-        conn.close()
 
-    def collect(self, start_date):
+    def collect(self, start_date, source):
         date = datetime.datetime.now();
         date_string = date.strftime("%Y-%m-%d")
-        codes = get_all_stocks()
+        codes = self.store.get_all_stocks()
 
         MAX_THREADS = 10
         codes_num = len(codes)
@@ -55,18 +63,18 @@ class Collector:
             end = start + codes_per_thread
             if i == MAX_THREADS - 1:
                 end = codes_num
-            t = threading.Thread(target=collect_internal, args = (start_date, date_string, codes[start:end]))
+            t = threading.Thread(target=_collect_internal, args = (self, start_date, date_string, codes[start:end], source))
             t.start()
             t.join()
     
 
-    def collect_market(self):
-        collect("1989-01-01")
+    def collect_market(self, source):
+        self.collect("1989-01-01", source)
 	
-    def collect_daily(self):
+    def collect_daily(self, source):
         date = datetime.datetime.now();
         date_string = date.strftime("%Y-%m-%d")
-        collect(date_string)
+        self.collect(date_string, source)
 
     def collect_stock_information(self):
         stocks = tushare.get_stock_basics();

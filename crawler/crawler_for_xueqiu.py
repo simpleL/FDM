@@ -36,12 +36,12 @@ class CrawlerForXueqiu:
             os.makedirs(path)
 
         self.__cache_index_file = "%s/cache_index"%(path)
-        cache_index_file = open(self.__cache_index_file, "r")
-        cache_index = cache_index_file.read()
-        cache_index_file.close()
-        if cache_index:
+        try:
+            cache_index_file = open(self.__cache_index_file, "r")
+            cache_index = cache_index_file.read()
+            cache_index_file.close()
             self.__cache_index = json.loads(cache_index)
-        else:
+        except:
             self.__cache_index = {}
 
     def __convert_date(self, date):
@@ -120,3 +120,10 @@ class CrawlerForXueqiu:
             result = pandas.read_csv(csv_path)
 
         return self.__process(result)
+
+    def get_h_data(self, code, start, end):
+        trades = self.get_hist_data(code)
+        trades = trades.query("date >= @start and date <= @end")
+        trades = trades.set_index("date")
+        trades = trades.sort_index()
+        return trades

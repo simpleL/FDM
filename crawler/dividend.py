@@ -15,7 +15,7 @@ def get_dividend(code):
         try:
             r = requests.get(request_url, timeout = 3)
         except:
-            print "getting %s dividend error"%(code)
+            print "getting %s dividend timeout..."%(code)
         else:
             content = r.content
             break

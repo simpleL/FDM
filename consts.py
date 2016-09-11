@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+
+# 涨跌类型
 # 一字涨停
 YIZI_ZT = 0
 # 普通涨停
@@ -17,3 +19,11 @@ DT_FAIL = 6
 DT = 7
 # 一字跌停
 YIZI_DT = 8
+
+# 来源
+# TUSHARE
+TUSHARE = 0
+# 雪球
+XUEQIU = 1
+# 搜狐
+SOHU = 2

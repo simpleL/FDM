@@ -7,6 +7,7 @@ import tushare
 
 from crawler import CrawlerForXueqiu
 from collector import Collector
+from consts import *
 from store import Store
 
 class DBInitializer:
@@ -16,6 +17,8 @@ class DBInitializer:
         self.__conf.read(conf_path)
 
         self.__conn = None
+        
+        self.collector = Collector()
 
     def start(self):
         host = self.__conf.get("mysql", "host")
@@ -50,8 +53,7 @@ class DBInitializer:
             sql_file.close()
             cursor.execute(create_table_sql)
 
-            c = Collector()
-            c.collect_stock_information()
+            self.collector.collect_stock_information()
         
 
     def __maybe_init_bonus_table(self, cursor):
@@ -62,8 +64,7 @@ class DBInitializer:
             sql_file.close()
             cursor.execute(create_bonus_sql)
 
-            c = Collector()
-            c.collect_bonus()
+            self.collector.collect_bonus()
 
     def __maybe_init_market_table(self, cursor):
         if cursor.execute('show tables like "market"') == 0:
@@ -73,7 +74,7 @@ class DBInitializer:
             sql_file.close()
             cursor.execute(create_table_sql)
 
-            c = CrawlerForXueqiu()
+            self.collector.collect_market(XUEQIU)
 
 
 
