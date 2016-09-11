@@ -8,14 +8,26 @@ import HTMLParser
 
 def get_dividend(code):
     request_url = "http://money.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/{code}.phtml".format(code = code)
-    r = requests.get(request_url)
-    
-    html = sp.fromstring(r.content)
-    dom = html.xpath("//table[@id=\"sharebonus_1\"]/tbody")
+    retry_count = 3
+    content = ""
+    success = False
+    for i in range(0, retry_count):
+        try:
+            r = requests.get(request_url, timeout = 3)
+        except:
+            print "getting %s dividend error"%(code)
+        else:
+            content = r.content
+            break
     
     res = pandas.DataFrame({"announce_date": [], "stat_right_date": [],
                             "exright_date": [], "dividend": [],
                             "bonus_stock": [], "tranadd_stock": []})
+    if len(content) == 0:
+        return res
+    
+    html = sp.fromstring(r.content)
+    dom = html.xpath("//table[@id=\"sharebonus_1\"]/tbody")
     
     td_count = 0
     for element in dom[0].iter():
