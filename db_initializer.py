@@ -55,7 +55,6 @@ class DBInitializer:
 
             self.collector.collect_stock_information()
         
-
     def __maybe_init_bonus_table(self, cursor):
         if cursor.execute('show tables like "bonus"') == 0:
             sql_path = "%s/FDM/sqls/create_bonus_table.sql"%(os.getcwd())
@@ -75,8 +74,6 @@ class DBInitializer:
             cursor.execute(create_table_sql)
 
             self.collector.collect_market(XUEQIU)
-
-
 
     def __del__(self):
         if self.__conn:

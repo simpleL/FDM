@@ -5,25 +5,13 @@ import getopt
 
 from collector import *
 from analyzer import *
+from consts import *
 
 def main(argv):
-    try:
-        opts, args = getopt.getopt(argv[1:], 'hvo:', ['act='])
-    except getopt.GetoptError, err:
-        print str(err)
-        sys.exit(2)
-    for o, a in opts:
-        if o in ('--act'):
-            if (a == "market"):
-                collect_market()
-            elif (a == "daily"):
-                collect_daily()
-            elif (a == "stocks"):
-                collect_stock_information()
-            elif (a == "analyze"):
-                analyze()
-            elif (a == "bonus"):
-                collect_bonus()
+    c = Collector()
+    c.collect_stock_information()
+    c.collect_bonus()
+    c.collect_daily(SOHU)
 
 if __name__ == '__main__':
     main(sys.argv)
