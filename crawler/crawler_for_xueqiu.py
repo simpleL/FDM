@@ -100,9 +100,17 @@ class CrawlerForXueqiu:
         result = pandas.DataFrame()
         if needs_update:
             url = self.__hist_url%(code)
-            r = requests.get(url, headers = self.__headers)
-            if r.status_code == 200:
-                csv = r.content
+            retry_count = 3
+            csv = None
+            for i in range(0, retry_count):
+                try:
+                    r = requests.get(url, headers = self.__headers, timeout = 5)
+                except:
+                    print "getting %s dividend timeout..."%(code)
+                else:
+                    csv = r.content
+                    break
+            if csv:
                 csv_file = open(csv_path, "w")
                 csv_file.write(csv)
                 csv_file.flush()
