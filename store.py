@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 
+import datetime
 import MySQLdb
 import pandas
 from utils import *
@@ -88,7 +89,7 @@ class Store:
         return bonus
 
     def get_exright_quotes(self, conn, code):
-        bonus = get_bonus(conn, code)
+        bonus = self.get_bonus(conn, code)
         bonus = bonus.set_index("exright_date")
         bonus = bonus.sort_index()
         bonus_index = 0
@@ -140,7 +141,7 @@ class Store:
                 last_close = result[i][4]
     
             quotes = pandas.DataFrame({"code": codes, "date": dates, "open": opens, "close": closes,
-                                       "low": lows, "high": highs, "volume": volumes, "amount": amounts,
+                                       "low": lows, "high": highs, "volume": volumes,
                                    "last_close": last_closes, "factor": factors})
 
             quotes = quotes.set_index("date")
