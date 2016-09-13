@@ -140,12 +140,12 @@ class Store:
             
                 last_close = result[i][4]
     
-            quotes = pandas.DataFrame({"code": codes, "date": dates, "open": opens, "close": closes,
-                                       "low": lows, "high": highs, "volume": volumes,
+        quotes = pandas.DataFrame({"code": codes, "date": dates, "open": opens, "close": closes,
+                                   "low": lows, "high": highs, "volume": volumes,
                                    "last_close": last_closes, "factor": factors})
 
-            quotes = quotes.set_index("date")
-            quotes = quotes.sort_index()
+        quotes = quotes.set_index("date")
+        quotes = quotes.sort_index()
     
-            return quotes
+        return quotes
 
