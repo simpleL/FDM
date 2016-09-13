@@ -2,7 +2,7 @@
 
 import datetime
 import math
-from .consts import *
+from ..consts import *
 
 class CalcUtils:
     def get_surge_limit(price):
@@ -24,7 +24,7 @@ class CalcUtils:
         high = float(trade.high)
         low = float(trade.low)
         if (close > last_close + 0.001):
-           surge_limit = get_surge_limit(last_close)
+            surge_limit = get_surge_limit(last_close)
             if abs(high - surge_limit) < 0.001:
                 if abs(close - surge_limit) < 0.001:
                     if abs(low - surge_limit) < 0.001:
