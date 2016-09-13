@@ -3,7 +3,7 @@
 import datetime
 import MySQLdb
 import pandas
-from utils import *
+from utils import CalcUtils
 
 class Store:
     def get_all_stocks(self):
@@ -121,7 +121,7 @@ class Store:
             exright_price = last_close
             if bonus_index < len(bonus) and date >= bonus.index[bonus_index]:
                 if last_close > 0:
-                    exright_info = exright(bonus.iloc[bonus_index], last_close)
+                    exright_info = CalcUtils.exright(bonus.iloc[bonus_index], last_close)
                     last_close = exright_info["price"]
                     factor = factor * exright_info["factor"]
                 else:

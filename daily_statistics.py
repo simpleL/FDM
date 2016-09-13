@@ -8,7 +8,7 @@ import time
 
 from consts import *
 from store import *
-from utils import *
+from utils import CalcUtils
 
 def stat_surge_limit(trades):
     result = {}
@@ -16,7 +16,7 @@ def stat_surge_limit(trades):
     last_date = 0
     for i in range(1, len(trades))[::-1]:
         trade = trades.iloc[i]
-        type = get_change_type(trade)
+        type = CalcUtils.get_change_type(trade)
         if type == YIZI_ZT or type == ZT:
             last_date = last_date + 1
         else:
@@ -35,7 +35,7 @@ def stat_constant_rise(trades):
     last_type = -1
     for i in range(1, len(trades))[::-1]:
         trade = trades.iloc[i]
-        type = get_change_type(trade)
+        type = CalcUtils.get_change_type(trade)
         if type == YIZI_ZT or type == ZT or type == ZT_FAIL or type == RISE:
             last_date = last_date + 1
         else:
@@ -100,7 +100,8 @@ def stat_bias_alarm():
 
 def daily_report():
     conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
-    codes = get_all_stocks()
+    s = Store()
+    codes = s.get_all_stocks()
     
     start_time = time.time() - 86400 * 60
     start_date = datetime.datetime.fromtimestamp(start_time).date()
@@ -111,7 +112,7 @@ def daily_report():
     
     for code in codes:
         # 除权后价格
-        trades = get_exright_quotes(conn, code)
+        trades = s.get_exright_quotes(conn, code)
         if len(trades) == 0:
             continue
         trades = trades.query("date > @start_date")
