@@ -14,9 +14,10 @@ def stat_surge_limit(trades):
     result = {}
     
     last_date = 0
+    cu = CalcUtils()
     for i in range(1, len(trades))[::-1]:
         trade = trades.iloc[i]
-        type = CalcUtils.get_change_type(trade)
+        type = cu.get_change_type(trade)
         if type == YIZI_ZT or type == ZT:
             last_date = last_date + 1
         else:
@@ -33,9 +34,10 @@ def stat_constant_rise(trades):
 
     last_date = 0
     last_type = -1
+    cu = CalcUtils()
     for i in range(1, len(trades))[::-1]:
         trade = trades.iloc[i]
-        type = CalcUtils.get_change_type(trade)
+        type = cu.get_change_type(trade)
         if type == YIZI_ZT or type == ZT or type == ZT_FAIL or type == RISE:
             last_date = last_date + 1
         else:

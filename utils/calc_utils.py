@@ -5,19 +5,19 @@ import math
 from ..consts import *
 
 class CalcUtils:
-    def get_surge_limit(price):
+    def get_surge_limit(cls, price):
         new_price = price * 1.1
         temp_price = math.floor(new_price * 100.0 + 0.5)
         new_price = temp_price / 100.0
         return new_price
 
-    def get_decline_limit(price):
+    def get_decline_limit(cls, price):
         new_price = price * 0.9
         temp_price = math.floor(new_price * 100.0 + 0.5)
         new_price = temp_price / 100.0
         return new_price
     
-    def get_change_type(trade):
+    def get_change_type(cls, trade):
         last_close = float(trade.last_close)
         open = float(trade.close)
         close = float(trade.close)
@@ -50,7 +50,7 @@ class CalcUtils:
         else:
             return FLAT
 
-    def exright(bonus, last_close):
+    def exright(cls, bonus, last_close):
         price = last_close
         factor = 1.0
         price = float(last_close) - float(bonus.dividend) / 10.0

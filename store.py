@@ -116,29 +116,30 @@ class Store:
     
         last_close = 0
         factor = 1
+        cu = CalcUtils()
         for i in range(0, count):
             date = result[i][2]
             exright_price = last_close
             if bonus_index < len(bonus) and date >= bonus.index[bonus_index]:
                 if last_close > 0:
-                    exright_info = CalcUtils.exright(bonus.iloc[bonus_index], last_close)
+                    exright_info = cu.exright(bonus.iloc[bonus_index], last_close)
                     last_close = exright_info["price"]
                     factor = factor * exright_info["factor"]
                 else:
                     print "code is %s, date is %s"%(code, bonus.index[bonus_index].strftime("%Y-%m-%d"))
                 bonus_index = bonus_index + 1
             
-                codes.append(result[i][1])
-                dates.append(date)
-                opens.append(result[i][3])
-                closes.append(result[i][4])
-                lows.append(result[i][5])
-                highs.append(result[i][6])
-                volumes.append(result[i][7])
-                last_closes.append(last_close)
-                factors.append(factor)
+            codes.append(result[i][1])
+            dates.append(date)
+            opens.append(result[i][3])
+            closes.append(result[i][4])
+            lows.append(result[i][5])
+            highs.append(result[i][6])
+            volumes.append(result[i][7])
+            last_closes.append(last_close)
+            factors.append(factor)
             
-                last_close = result[i][4]
+            last_close = result[i][4]
     
         quotes = pandas.DataFrame({"code": codes, "date": dates, "open": opens, "close": closes,
                                    "low": lows, "high": highs, "volume": volumes,

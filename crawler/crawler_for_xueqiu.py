@@ -131,7 +131,8 @@ class CrawlerForXueqiu:
 
     def get_h_data(self, code, start, end):
         trades = self.get_hist_data(code)
-        trades = trades.query("date >= @start and date <= @end")
         trades = trades.set_index("date")
-        trades = trades.sort_index()
+        if len(trades) > 0:
+            trades = trades.sort_index()
+            trades = trades.query("date >= @start and date <= @end")
         return trades
