@@ -16,5 +16,6 @@ if __name__ == "__main__":
     for code in codes:
         trades = s.get_exright_quotes(conn, code)
         if len(trades) == 0:
-            empty.append(trades)
+            empty.append(code)
     
+    print empty
