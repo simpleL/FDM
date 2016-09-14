@@ -11,7 +11,7 @@ def main(argv):
     c = Collector()
     c.collect_stock_information()
     c.collect_bonus()
-    c.collect_daily(SOHU)
+    c.collect_daily(TUSHARE)
 
 if __name__ == '__main__':
     main(sys.argv)

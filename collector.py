@@ -33,6 +33,8 @@ class Collector:
             stock_data = get_h_data(code, start, end)
         elif source == XUEQIU:
             stock_data = self.xueqiu.get_h_data(code, start, end)
+        elif source == TUSHARE:
+            stock_data = tushare.get_hist_data(code, start = start, end = end)
         
         if (stock_data is None):
             print "%s has no data"%(code)
