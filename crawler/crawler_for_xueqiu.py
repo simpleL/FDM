@@ -106,7 +106,7 @@ class CrawlerForXueqiu:
                 try:
                     r = requests.get(url, headers = self.__headers, timeout = 5)
                 except:
-                    print "getting %s dividend timeout..."%(code)
+                    print "getting %s timeout..."%(code)
                 else:
                     csv = r.content
                     break
@@ -130,7 +130,7 @@ class CrawlerForXueqiu:
         return self.__process(result)
 
     def get_h_data(self, code, start, end):
-        trades = self.get_hist_data(code)
+        trades = self.get_hist_data(code, use_cache = False)
         trades = trades.set_index("date")
         if len(trades) > 0:
             trades = trades.sort_index()

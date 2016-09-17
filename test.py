@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from .crawler import CrawlerForXueqiu
 from . import DBInitializer
+from analyzer import *
 from consts import *
 from store import Store
 from collector import Collector
 from pref_service import PrefService
 import MySQLdb
+import os
 import tushare
 
 if __name__ == "__main__":
@@ -29,3 +31,7 @@ if __name__ == "__main__":
     #c = Collector()
     #for code in codes:
     #    c.collect_trades(conn, code, "2016-09-13", "2016-09-14", TUSHARE)
+    result = analyze()
+    path = "%s/FDM Data/analyze0.csv"%(os.getcwd())
+    print path
+    result.to_csv(path)

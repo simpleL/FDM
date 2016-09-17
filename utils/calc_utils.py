@@ -24,7 +24,7 @@ class CalcUtils:
         high = float(trade.high)
         low = float(trade.low)
         if (close > last_close + 0.001):
-            surge_limit = get_surge_limit(last_close)
+            surge_limit = cls.get_surge_limit(last_close)
             if abs(high - surge_limit) < 0.001:
                 if abs(close - surge_limit) < 0.001:
                     if abs(low - surge_limit) < 0.001:
@@ -36,7 +36,7 @@ class CalcUtils:
             else:
                 return RISE
         elif (close < last_close - 0.001):
-            decline_limit = get_decline_limit(last_close)
+            decline_limit = cls.get_decline_limit(last_close)
             if abs(low - decline_limit) < 0.001:
                 if abs(close - decline_limit) < 0.001:
                     if abs(high - decline_limit) < 0.001:

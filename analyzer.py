@@ -5,8 +5,8 @@ import pandas
 import math
 
 from consts import *
-from store import *
-from utils import *
+from store import Store
+from utils import CalcUtils
     
 """
     ·ÖÎöÕÇµøÍ££¬
@@ -19,6 +19,7 @@ DataFrame
 
 """
 def analyze_extreme_changes(result, stock_quotes, types):
+    cu = CalcUtils()
     last_close = stock_quotes.close[0];
     
     if (len(stock_quotes.index) == 1):
@@ -29,7 +30,7 @@ def analyze_extreme_changes(result, stock_quotes, types):
     for i in range(1, len(stock_quotes.index)):
         trade = stock_quotes.iloc[i]
         
-        change_type = get_change_type(trade)
+        change_type = cu.get_change_type(trade)
         
         matches = False
         for type in types:
@@ -86,14 +87,15 @@ def analyze_extreme_changes(result, stock_quotes, types):
 
 def analyze():
     conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
-    codes = get_all_stocks()
+    s = Store()
+    codes = s.get_all_stocks()
     
     result = pandas.DataFrame({"code": [], "start_date": [], "end_date": [], "last_date": [],
                                "one_day_change": [], "three_day_change": [], "five_day_change": [],
                                "ten_day_change":[], "twenty_day_change": []})
     
     for code in codes:
-        stock_quotes = get_exright_quotes(conn, code)
+        stock_quotes = s.get_exright_quotes(conn, code)
         """
         ÐÂ¹É
         """
@@ -108,17 +110,7 @@ def analyze():
     return result
 
 if __name__ == '__main__':
-    conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
-    
-    result = pandas.DataFrame({"code": [], "start_date": [], "end_date": [], "last_date": [],
-                               "one_day_change": [], "three_day_change": [], "five_day_change": [],
-                               "ten_day_change":[], "twenty_day_change": []})
-                               
-    stock_quotes = get_exright_quotes(conn, "000001")
-    
-    date = datetime.date(2005, 1, 1)
-    #s = stock_quotes.loc[date]
-    #print get_change_type(s)
-    result = analyze_extreme_changes(result, stock_quotes, [YIZI_ZT, ZT])
-    conn.close()
-    print result.query("start_date > '2005-01-01'")
+    #result = analyze()
+    path = "%s/FDM Data/analyze0.csv"%(os.getcwd())
+    print path
+    result.to_cvs(path)
