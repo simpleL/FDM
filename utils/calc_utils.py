@@ -7,13 +7,13 @@ from ..consts import *
 class CalcUtils:
     def get_surge_limit(cls, price):
         new_price = price * 1.1
-        temp_price = math.floor(new_price * 100.0 + 0.5)
+        temp_price = round(new_price * 100.0 + 0.01)
         new_price = temp_price / 100.0
         return new_price
 
     def get_decline_limit(cls, price):
         new_price = price * 0.9
-        temp_price = math.floor(new_price * 100.0 + 0.5)
+        temp_price = round(new_price * 100.0 + 0.01)
         new_price = temp_price / 100.0
         return new_price
     
