@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .crawler import CrawlerForXueqiu
+import crawler
 from . import DBInitializer
 from analyzer import *
 from consts import *
@@ -13,7 +13,7 @@ import tushare
 if __name__ == "__main__":
     #d = DBInitializer()
     #d.start()
-    #c = CrawlerForXueqiu()
+    c = crawler.CrawlerForXueqiu()
     #print c.get_h_data("002174", "1989-01-01", "2016-09-11")
     #s = Store()
     #codes = s.get_all_stocks()
@@ -31,7 +31,10 @@ if __name__ == "__main__":
     #c = Collector()
     #for code in codes:
     #    c.collect_trades(conn, code, "2016-09-13", "2016-09-14", TUSHARE)
-    result = analyze()
-    path = "%s/FDM Data/analyze0.csv"%(os.getcwd())
-    print path
-    result.to_csv(path)
+    #result = analyze()
+    #path = "%s/FDM Data/analyze0.csv"%(os.getcwd())
+    #print path
+    #result.to_csv(path)
+    
+    c = crawler.CrawlerFor10JQKA()
+    print c.get_finance_data("002174")

@@ -23,7 +23,7 @@ def _collect_internal(collector, start_date, end_date, codes, source):
 class Collector:
     def __init__(self):
         self.store = Store();
-        self.xueqiu = CrawlerForXueqiu()
+        self.xueqiu = crawler.CrawlerForXueqiu()
 
     def collect_trades(self, conn, code, start, end, source):
         sql_string = "insert into market (code, date, open, close, low, high, volume) values (%s, %s, %s, %s, %s, %s, %s)"

@@ -1,4 +1,4 @@
-停牌股票没有抓取
+﻿停牌股票没有抓取
 
 世纪游轮11月19号数据不对
 
@@ -44,3 +44,13 @@ http://q.stock.sohu.com/feedback.html
 价格大于500：
 000901，000902，000903，000905，000906，000908，000910，000911，
 000913，000915，000916，000918，000919，000920，000921，000922
+
+https://xueqiu.com/stock/forchartk/stocklist.json?symbol=SH600602&period=1day&type=normal&begin=1442480874702&end=1474016874702&_=1474016874704 
+
+http://basic.10jqka.com.cn/002174/xls/mainreport.xls
+
+data = xlrd.open_workbook("C:\\Users\\linsihua\\Downloads\\mainreport.xls")
+
+http://stackoverflow.com/questions/12705527/reading-excel-files-with-xlrd
+
+market库中还需要增加名字字段，因为名字会一直改变的，比如：重组、st等

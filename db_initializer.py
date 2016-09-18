@@ -5,10 +5,10 @@ import MySQLdb
 import os
 import tushare
 
-from crawler import CrawlerForXueqiu
 from collector import Collector
 from consts import *
 from store import Store
+import crawler
 
 class DBInitializer:
     def __init__(self):
