@@ -34,8 +34,8 @@ def main(argv):
             we don't need to collect bonus data every day,
             since it will not change so often
             '''
-            c.collect_bonus()
             print "collect bonus"
+            c.collect_bonus()
             prefs.set_value("bonus_collect_date", now_string)
     
 if __name__ == '__main__':
