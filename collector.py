@@ -22,6 +22,7 @@ class Collector:
     def __init__(self):
         self.store = Store();
         self.xueqiu = crawler.CrawlerForXueqiu()
+        self._10jqka = crawler.CrawlerFor10JQKA()
 
     def collect_trades(self, conn, code, start, end, source):
         sql_string = "insert into market (code, date, open, close, low, high, volume) values (%s, %s, %s, %s, %s, %s, %s)"
@@ -164,32 +165,38 @@ class Collector:
         conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
         cursor = conn.cursor()
         print "collect finance"
-        '''
-        insert_sql = "insert into bonus (code, announce_date, stat_right_date, exright_date, dividend, bonus_stock, tranadd_stock) values (%s, %s, %s, %s, %s, %s, %s)"
+        
+        insert_sql = "insert into finance (code, date, earning_per_share, net_margin, nonrecurring_net_margin,"\
+                     "total_income, asset_per_share, roe, diluted_roe, debt_ratio, fund_per_share,"\
+                     "undistributed_profit_per_share, cash_flow_per_share) values"\
+                     "(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     
         for code in codes:
-            server_stock_bonus = get_dividend(code)
-            server_stock_bonus = server_stock_bonus.set_index("announce_date")
-            server_stock_bonus = server_stock_bonus.sort_index()
+            server_stock_finance = self._10jqka.get_finance_data(code)
+            if len(server_stock_finance) > 0:
+                server_stock_finance = server_stock_finance.set_index("date")
+                server_stock_finance = server_stock_finance.sort_index()
         
-            stock_bonus = self.store.get_bonus(conn, code)
-            stock_bonus = stock_bonus.set_index("announce_date")
-            stock_bonus = stock_bonus.sort_index()
+            stock_finance = self.store.get_finance(conn, code)
+            if len(stock_finance) > 0:
+                stock_finance = stock_bonus.set_index("date")
+                stock_finance = stock_bonus.sort_index()
         
-            diff = server_stock_bonus.index.difference(stock_bonus.index)
+            diff = server_stock_finance.index.difference(stock_finance.index)
         
             insert_list = []
         
-            for announce_date in diff:
-                bonus = server_stock_bonus.loc[announce_date]
-                params = (bonus.code, announce_date, bonus.stat_right_date,
-                          bonus.exright_date, bonus.dividend, bonus.bonus_stock,
-                          bonus.tranadd_stock)
+            for date in diff:
+                finance = server_stock_finance.loc[date]
+                params = (finance.code, date, finance.earning_per_share, finance.net_margin,
+                          finance.nonrecurring_net_margin, finance.total_income, finance.asset_per_share,
+                          finance.roe, finance.diluted_roe, finance.debt_ratio, finance.fund_per_share,
+                          finance.undistributed_profit_per_share, finance.cash_flow_per_share)
                 insert_list.append(params)
         
             if len(insert_list) > 0:
                 cursor.executemany(insert_sql, insert_list)
                 conn.commit()
-        '''
+        
         cursor.close()
         conn.close()

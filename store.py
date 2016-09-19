@@ -6,6 +6,27 @@ import pandas
 from utils import CalcUtils
 
 class Store:
+    def __data_from_cursor(self, cursor):
+        if len(cursor.description) == 0:
+            return pandas.DataFrame()
+
+        all = cursor.fetchall()
+
+        arr = []
+        keys = []
+        for i in range(0, len(cursor.description)):
+            keys.append(cursor.description[i][0])
+
+        for i in range(0, len(all)):
+            dict = {}
+            for j in range(0, len(keys)):
+                key = keys[j]
+                dict[key] = all[i][j]
+            print dict
+            arr.append(dict)
+
+        return pandas.DataFrame(arr)
+
     def get_all_stocks(self):
         conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
         sql_string = "select code from stock_information"
@@ -60,33 +81,23 @@ class Store:
         cursor = conn.cursor()
         
         count = cursor.execute(sql_string)
-        result = cursor.fetchall()
-        
+        result = self.__data_from_cursor(cursor)
+
         cursor.close()
+
+        return result
+
+    def get_finance(self, conn, code):
+        sql_string = "select * from finance where code = \"%s\""%(code)
+        cursor = conn.cursor()
         
-        codes = []
-        announce_dates = []
-        stat_right_dates = []
-        exright_dates = []
-        dividends = []
-        bonus_stocks = []
-        tranadd_stocks = []
-        
-        for i in range(0, count):
-            codes.append(result[i][1])
-            announce_dates.append(result[i][2])
-            stat_right_dates.append(result[i][3])
-            exright_dates.append(result[i][4])
-            dividends.append(result[i][5])
-            bonus_stocks.append(result[i][6])
-            tranadd_stocks.append(result[i][7])
-        
-        bonus = pandas.DataFrame({"code": codes, "announce_date": announce_dates,
-                                  "stat_right_date": stat_right_dates, "exright_date": exright_dates,
-                                  "dividend": dividends, "bonus_stock": bonus_stocks,
-                                  "tranadd_stock": tranadd_stocks})
-        
-        return bonus
+        count = cursor.execute(sql_string)
+
+        result = self.__data_from_cursor(cursor)
+
+        cursor.close()
+
+        return result
 
     def get_exright_quotes(self, conn, code):
         bonus = self.get_bonus(conn, code)

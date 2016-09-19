@@ -45,7 +45,12 @@ class CrawlerFor10JQKA:
         except:
             self.__cache_index = {}
 
-    def __process_finance_excel(self, excel_path):
+    def __get_double(self, number):
+        if type(number) == type("") or type(number) == type(u""):
+            return 0
+        return number
+
+    def __process_finance_excel(self, code, excel_path):
         #excel_path = "C:\\Users\\linsihua\\Downloads\\mainreport.xls"
         print excel_path
         arr = []
@@ -56,17 +61,18 @@ class CrawlerFor10JQKA:
         for i in range(1, sheet.ncols):
             dict = {}
             dict["date"] = sheet.col_values(i)[0]
-            dict["earning_per_share"] = sheet.col_values(i)[1]
-            dict["net_margin"] = sheet.col_values(i)[2]
-            dict["nonrecurring_net_margin"] = sheet.col_values(i)[4]
-            dict["total_income"] = sheet.col_values(i)[5]
-            dict["asset_per_share"] = sheet.col_values(i)[7]
-            dict["roe"] = sheet.col_values(i)[8]
-            dict["diluted_roe"] = sheet.col_values(i)[9]
-            dict["debt_ratio"] = sheet.col_values(i)[10]
-            dict["fund_per_share"] = sheet.col_values(i)[11]
-            dict["undistributed_profit_per_share"] = sheet.col_values(i)[12]
-            dict["cash_flow_per_share"] = sheet.col_values(i)[13]
+            dict["code"] = code
+            dict["earning_per_share"] = self.__get_double(sheet.col_values(i)[1])
+            dict["net_margin"] = self.__get_double(sheet.col_values(i)[2])
+            dict["nonrecurring_net_margin"] = self.__get_double(sheet.col_values(i)[4])
+            dict["total_income"] = self.__get_double(sheet.col_values(i)[5])
+            dict["asset_per_share"] = self.__get_double(sheet.col_values(i)[7])
+            dict["roe"] = self.__get_double(sheet.col_values(i)[8])
+            dict["diluted_roe"] = self.__get_double(sheet.col_values(i)[9])
+            dict["debt_ratio"] = self.__get_double(sheet.col_values(i)[10])
+            dict["fund_per_share"] = self.__get_double(sheet.col_values(i)[11])
+            dict["undistributed_profit_per_share"] = self.__get_double(sheet.col_values(i)[12])
+            dict["cash_flow_per_share"] = self.__get_double(sheet.col_values(i)[13])
             arr.append(dict)
             
         result = pandas.DataFrame(arr)
@@ -84,7 +90,7 @@ class CrawlerFor10JQKA:
         needs_update = True
         excel_path = "%s/%s_finance.xls"%(self.__cache_dir, code)
         today = datetime.date.fromtimestamp(time.time()).strftime("%Y-%m-%d")
-        if self.__cache_index.has_key(code) and os.path.exists(csv_path):
+        if self.__cache_index.has_key(code) and os.path.exists(excel_path):
             cache = self.__cache_index[code]
             if use_cache:
                 needs_update = False
@@ -113,7 +119,7 @@ class CrawlerFor10JQKA:
                 excel_file.flush()
                 excel_file.close()
 
-                result = self.__process_finance_excel(excel_path)
+                result = self.__process_finance_excel(code, excel_path)
                 if len(result) > 0:
                     self.__update_cache_index(code, today)
                 else:
@@ -121,13 +127,10 @@ class CrawlerFor10JQKA:
             else:
                 print "failed getting %s with status_code %d"%(code, r.status_code)
         else:
-            result = self.__process_finance_excel(excel_path)
+            result = self.__process_finance_excel(code, excel_path)
 
         return result
 
     def get_finance_data(self, code):
         trades = self.__get_finance_data(code, use_cache = False)
-        trades = trades.set_index("date")
-        if len(trades) > 0:
-            trades = trades.sort_index()
         return trades
