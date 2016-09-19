@@ -11,9 +11,9 @@ import os
 import tushare
 
 if __name__ == "__main__":
-    #d = DBInitializer()
-    #d.start()
-    c = crawler.CrawlerForXueqiu()
+    d = DBInitializer()
+    d.start()
+    #c = crawler.CrawlerForXueqiu()
     #print c.get_h_data("002174", "1989-01-01", "2016-09-11")
     #s = Store()
     #codes = s.get_all_stocks()
@@ -36,5 +36,5 @@ if __name__ == "__main__":
     #print path
     #result.to_csv(path)
     
-    c = crawler.CrawlerFor10JQKA()
-    print c.get_finance_data("002174")
+    #c = crawler.CrawlerFor10JQKA()
+    #print c.get_finance_data("002174")

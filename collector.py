@@ -6,11 +6,9 @@ import tushare
 import MySQLdb
 
 from .utils import StringUtils
-from crawler.dividend import *
-from crawler.crawler_for_xueqiu import *
-from crawler.market import *
 from consts import *
 from store import Store
+import crawler
 
 def _collect_internal(collector, start_date, end_date, codes, source):
     conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant")
@@ -30,7 +28,7 @@ class Collector:
 
         stock_data = None;
         if source == SOHU:
-            stock_data = get_h_data(code, start, end)
+            stock_data = crawler.get_h_data(code, start, end)
         elif source == XUEQIU:
             stock_data = self.xueqiu.get_h_data(code, start, end)
         elif source == TUSHARE:
@@ -134,7 +132,7 @@ class Collector:
         insert_sql = "insert into bonus (code, announce_date, stat_right_date, exright_date, dividend, bonus_stock, tranadd_stock) values (%s, %s, %s, %s, %s, %s, %s)"
     
         for code in codes:
-            server_stock_bonus = get_dividend(code)
+            server_stock_bonus = crawler.get_dividend(code)
             server_stock_bonus = server_stock_bonus.set_index("announce_date")
             server_stock_bonus = server_stock_bonus.sort_index()
         
@@ -157,5 +155,41 @@ class Collector:
                 cursor.executemany(insert_sql, insert_list)
                 conn.commit()
         
+        cursor.close()
+        conn.close()
+
+    def collect_finance(self):
+        codes = self.store.get_all_stocks()
+    
+        conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
+        cursor = conn.cursor()
+        print "collect finance"
+        '''
+        insert_sql = "insert into bonus (code, announce_date, stat_right_date, exright_date, dividend, bonus_stock, tranadd_stock) values (%s, %s, %s, %s, %s, %s, %s)"
+    
+        for code in codes:
+            server_stock_bonus = get_dividend(code)
+            server_stock_bonus = server_stock_bonus.set_index("announce_date")
+            server_stock_bonus = server_stock_bonus.sort_index()
+        
+            stock_bonus = self.store.get_bonus(conn, code)
+            stock_bonus = stock_bonus.set_index("announce_date")
+            stock_bonus = stock_bonus.sort_index()
+        
+            diff = server_stock_bonus.index.difference(stock_bonus.index)
+        
+            insert_list = []
+        
+            for announce_date in diff:
+                bonus = server_stock_bonus.loc[announce_date]
+                params = (bonus.code, announce_date, bonus.stat_right_date,
+                          bonus.exright_date, bonus.dividend, bonus.bonus_stock,
+                          bonus.tranadd_stock)
+                insert_list.append(params)
+        
+            if len(insert_list) > 0:
+                cursor.executemany(insert_sql, insert_list)
+                conn.commit()
+        '''
         cursor.close()
         conn.close()

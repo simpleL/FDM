@@ -1,1 +1,1 @@
-create table bonus(id int primary key not null auto_increment, code char(8) not null, announce_date date, stat_right_date date, exright_date date, dividend decimal(10, 6), bonus_stock decimal(10, 6), tranadd_stock decimal(10, 6));
+create table bonus(id int primary key not null auto_increment, code char(8) not null, announce_date date, stat_right_date date, exright_date date, dividend decimal(10, 6), bonus_stock decimal(10, 6), tranadd_stock decimal(10, 6));create index bonus_code_index on bonus(code(8));
