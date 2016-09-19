@@ -134,12 +134,14 @@ class Collector:
     
         for code in codes:
             server_stock_bonus = crawler.get_dividend(code)
-            server_stock_bonus = server_stock_bonus.set_index("announce_date")
-            server_stock_bonus = server_stock_bonus.sort_index()
+            if len(server_stock_bonus) > 0:
+                server_stock_bonus = server_stock_bonus.set_index("announce_date")
+                server_stock_bonus = server_stock_bonus.sort_index()
         
             stock_bonus = self.store.get_bonus(conn, code)
-            stock_bonus = stock_bonus.set_index("announce_date")
-            stock_bonus = stock_bonus.sort_index()
+            if len(stock_bonus) > 0:
+                stock_bonus = stock_bonus.set_index("announce_date")
+                stock_bonus = stock_bonus.sort_index()
         
             diff = server_stock_bonus.index.difference(stock_bonus.index)
         

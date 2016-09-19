@@ -22,7 +22,6 @@ class Store:
             for j in range(0, len(keys)):
                 key = keys[j]
                 dict[key] = all[i][j]
-            print dict
             arr.append(dict)
 
         return pandas.DataFrame(arr)
@@ -82,7 +81,7 @@ class Store:
         
         count = cursor.execute(sql_string)
         result = self.__data_from_cursor(cursor)
-
+        
         cursor.close()
 
         return result

@@ -51,8 +51,6 @@ class CrawlerFor10JQKA:
         return number
 
     def __process_finance_excel(self, code, excel_path):
-        #excel_path = "C:\\Users\\linsihua\\Downloads\\mainreport.xls"
-        print excel_path
         arr = []
         data = xlrd.open_workbook(excel_path)
         if data is None or len(data.sheets()) < 2:
