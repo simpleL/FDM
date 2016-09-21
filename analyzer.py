@@ -85,6 +85,15 @@ def analyze_extreme_changes(result, stock_quotes, types):
     
     return result
 
+def analyze_bonus():
+    conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
+    s = Store()
+    codes = s.get_all_stocks()
+    for code in codes:
+        bonus = s.get_bonus(conn, code)
+        finance = s.get_finance(conn, code)
+        
+
 def analyze():
     conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
     s = Store()
