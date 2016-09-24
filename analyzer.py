@@ -1,8 +1,10 @@
 # -*- coding:utf-8 -*- 
 
+import datetime
 import MySQLdb
 import pandas
 import math
+import os
 
 from consts import *
 from store import Store
@@ -89,10 +91,55 @@ def analyze_bonus():
     conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
     s = Store()
     codes = s.get_all_stocks()
+    arr = []
     for code in codes:
+        print "analyzing %s..."%(code)
         bonus = s.get_bonus(conn, code)
+        if len(bonus) > 0:
+            bonus = bonus.set_index("announce_date")
+            bonus = bonus.sort_index()
+        else:
+            continue
         finance = s.get_finance(conn, code)
+        if len(finance) > 0:
+            finance = finance.set_index("date")
+            finance = finance.sort_index()
         
+        sql = "select MIN(date) from market where code = \"%s\""%(code)
+        cursor = conn.cursor()
+        count = cursor.execute(sql)
+        if count == 0:
+            continue
+        start_date = cursor.fetchone()[0]
+        cursor.close()
+        bonus_index = 0
+        for i in range(0, len(finance)):
+            if bonus_index >= len(bonus):
+                break;
+            
+            bonus_date = bonus.index[bonus_index]
+            date = finance.index[i]
+            if date < start_date:
+                continue
+            next_date = datetime.date(2199, 12, 31)
+            if i < len(finance) - 1:
+                next_date = finance.index[i + 1]
+            
+            if bonus_date > date and bonus_date <= next_date:
+                f = finance.iloc[i]
+                b = bonus.iloc[bonus_index]
+                dict = {}
+                dict["date"] = date
+                dict["announce_date"] = bonus_date
+                dict["code"] = f.code
+                dict["fund"] = f.fund_per_share
+                dict["total"] = b.bonus_stock + b.tranadd_stock
+                dict["exright_date"] = b.exright_date
+                arr.append(dict)
+                bonus_index = bonus_index + 1
+    
+    conn.close()
+    return pandas.DataFrame(arr)
 
 def analyze():
     conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
@@ -119,7 +166,7 @@ def analyze():
     return result
 
 if __name__ == '__main__':
-    #result = analyze()
-    path = "%s/FDM Data/analyze0.csv"%(os.getcwd())
-    print path
-    result.to_cvs(path)
+    result = analyze_bonus()
+    path = "%s/FDM Data/analyze_bonus.csv"%(os.getcwd())
+    print result
+    result.to_csv(path)

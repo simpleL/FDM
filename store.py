@@ -100,11 +100,10 @@ class Store:
 
     def get_exright_quotes(self, conn, code):
         bonus = self.get_bonus(conn, code)
-        bonus = bonus.set_index("exright_date")
-        bonus = bonus.sort_index()
+        if len(bonus) > 0:
+            bonus = bonus.set_index("exright_date")
+            bonus = bonus.sort_index()
         bonus_index = 0
-        if len(bonus) > 0 and bonus.index[0] == datetime.datetime.strptime("1900-01-01", "%Y-%m-%d").date():
-            bonus_index = 1
         query_bonus_sql = "select * from market where code = '%s' order by date asc"%(code)
 
         cursor = conn.cursor()
