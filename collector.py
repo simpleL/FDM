@@ -6,17 +6,16 @@ import tushare
 import MySQLdb
 
 from .utils import StringUtils
+from conn_manager import ConnManager
 from consts import *
 from store import Store
 import crawler
 
 def _collect_internal(collector, start_date, end_date, codes, source):
-    conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant")
+    conn = ConnManager.get_conn()
 
     for code in codes:
         collector.collect_trades(conn, code, start_date, end_date, source)
-    
-    conn.close()
 
 class Collector:
     def __init__(self):
@@ -80,7 +79,7 @@ class Collector:
     def collect_stock_information(self):
         stocks = tushare.get_stock_basics();
     
-        conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
+        conn = ConnManager.get_conn()
         cursor = conn.cursor()
         update_list = [];
         insert_list = [];
@@ -122,12 +121,11 @@ class Collector:
             conn.commit()
     
         cursor.close()
-        conn.close()
     
     def collect_bonus(self):
         codes = self.store.get_all_stocks()
     
-        conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
+        conn = ConnManager.get_conn()
         cursor = conn.cursor()
     
         insert_sql = "insert into bonus (code, announce_date, stat_right_date, exright_date, dividend, bonus_stock, tranadd_stock) values (%s, %s, %s, %s, %s, %s, %s)"
@@ -138,7 +136,7 @@ class Collector:
                 server_stock_bonus = server_stock_bonus.set_index("announce_date")
                 server_stock_bonus = server_stock_bonus.sort_index()
         
-            stock_bonus = self.store.get_bonus(conn, code)
+            stock_bonus = self.store.get_bonus(code)
             if len(stock_bonus) > 0:
                 stock_bonus = stock_bonus.set_index("announce_date")
                 stock_bonus = stock_bonus.sort_index()
@@ -159,12 +157,11 @@ class Collector:
                 conn.commit()
         
         cursor.close()
-        conn.close()
 
     def collect_finance(self):
         codes = self.store.get_all_stocks()
     
-        conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
+        ConnManager.get_conn()
         cursor = conn.cursor()
         print "collect finance"
         
@@ -179,7 +176,7 @@ class Collector:
                 server_stock_finance = server_stock_finance.set_index("date")
                 server_stock_finance = server_stock_finance.sort_index()
         
-            stock_finance = self.store.get_finance(conn, code)
+            stock_finance = self.store.get_finance(code)
             if len(stock_finance) > 0:
                 stock_finance = stock_bonus.set_index("date")
                 stock_finance = stock_bonus.sort_index()
@@ -201,4 +198,3 @@ class Collector:
                 conn.commit()
         
         cursor.close()
-        conn.close()

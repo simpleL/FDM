@@ -88,19 +88,18 @@ def analyze_extreme_changes(result, stock_quotes, types):
     return result
 
 def analyze_bonus():
-    conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
     s = Store()
     codes = s.get_all_stocks()
     arr = []
     for code in codes:
         print "analyzing %s..."%(code)
-        bonus = s.get_bonus(conn, code)
+        bonus = s.get_bonus(code)
         if len(bonus) > 0:
             bonus = bonus.set_index("announce_date")
             bonus = bonus.sort_index()
         else:
             continue
-        finance = s.get_finance(conn, code)
+        finance = s.get_finance(code)
         if len(finance) > 0:
             finance = finance.set_index("date")
             finance = finance.sort_index()
@@ -138,11 +137,9 @@ def analyze_bonus():
                 arr.append(dict)
                 bonus_index = bonus_index + 1
     
-    conn.close()
     return pandas.DataFrame(arr)
 
 def analyze():
-    conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
     s = Store()
     codes = s.get_all_stocks()
     
@@ -151,7 +148,7 @@ def analyze():
                                "ten_day_change":[], "twenty_day_change": []})
     
     for code in codes:
-        stock_quotes = s.get_exright_quotes(conn, code)
+        stock_quotes = s.get_exright_quotes(code)
         """
         ÐÂ¹É
         """
@@ -160,8 +157,6 @@ def analyze():
             continue
         
         result = analyze_extreme_changes(result, stock_quotes, [YIZI_ZT])
-
-    conn.close()
     
     return result
 

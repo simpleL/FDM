@@ -7,6 +7,7 @@ import tushare
 
 from collector import Collector
 from consts import *
+from conn_manager import ConnManager
 from store import Store
 import crawler
 
@@ -27,9 +28,7 @@ class DBInitializer:
         charset = self.__conf.get("mysql", "charset")
         db = self.__conf.get("mysql", "db")
 
-        mysql_path = "mysql:"
-        self.__conn = MySQLdb.connect(host = host, user = user,
-                                    passwd = password, charset = charset)
+        self.__conn = ConnManager.get_conn()
 
         cursor = self.__conn.cursor()
         try:
@@ -98,8 +97,4 @@ class DBInitializer:
 
             self.collector.collect_market(XUEQIU)
         cursor.close()
-
-    def __del__(self):
-        if self.__conn:
-            self.__conn.close()
 

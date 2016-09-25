@@ -101,7 +101,6 @@ def stat_bias_alarm():
     return result
 
 def daily_report():
-    conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
     s = Store()
     codes = s.get_all_stocks()
     
@@ -114,7 +113,7 @@ def daily_report():
     
     for code in codes:
         # 除权后价格
-        trades = s.get_exright_quotes(conn, code)
+        trades = s.get_exright_quotes(code)
         if len(trades) == 0:
             continue
         trades = trades.query("date > @start_date")
@@ -131,14 +130,12 @@ def daily_report():
         if len(narrowly_range) > 0:
             narrowly_ranges = narrowly_ranges.append(narrowly_range, ignore_index = True)
         
-    conn.close()
     
     return narrowly_ranges
 
 if __name__ == '__main__':
-    conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
     """
-    trades = get_exright_quotes(conn, "002388")
+    trades = get_exright_quotes("002388")
     start_time = time.time() - 86400 * 50
     start_date = datetime.datetime.fromtimestamp(start_time).date()
     trades = trades.query("date > @start_date")

@@ -1,14 +1,15 @@
 import MySQLdb
 
 class ConnManager:
-    conn = None
+    __conn = None
+    @classmethod
     def get_conn(cls):
-        if conn is None:
-            conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset = "utf8")
+        if ConnManager.__conn is None:
+            ConnManager.__conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset = "utf8")
         
         try:
-            conn.ping()
+            ConnManager.__conn.ping()
         except:
-            conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset = "utf8")
+            ConnManager.__conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset = "utf8")
         
-        return conn
+        return ConnManager.__conn

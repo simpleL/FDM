@@ -3,6 +3,7 @@
 import datetime
 import MySQLdb
 import pandas
+from conn_manager import ConnManager
 from utils import CalcUtils
 
 class Store:
@@ -27,7 +28,7 @@ class Store:
         return pandas.DataFrame(arr)
 
     def get_all_stocks(self):
-        conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
+        conn = ConnManager.get_conn()
         sql_string = "select code from stock_information"
         cursor = conn.cursor()
         
@@ -39,20 +40,17 @@ class Store:
             codes.append(result[i][0])
     
         cursor.close()
-        conn.close()
     
         return codes
 
     def get_all_quotes(self):
-        conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant", charset="utf8")
+        conn = ConnManager.get_conn()
         sql_string = "select * from market"
         cursor = conn.cursor()
         
         count = cursor.execute(sql_string)
         result = cursor.fetchall()
-    
         cursor.close()
-        conn.close()
         
         codes = []
         dates = []
@@ -75,7 +73,8 @@ class Store:
                                "low": lows, "high": highs, "volume": volumes})
         return quotes
     
-    def get_bonus(self, conn, code):
+    def get_bonus(self, code):
+        conn = ConnManager().get_conn()
         sql_string = "select * from bonus where code = \"%s\""%(code)
         cursor = conn.cursor()
         
@@ -86,7 +85,8 @@ class Store:
 
         return result
 
-    def get_finance(self, conn, code):
+    def get_finance(self, code):
+        conn = ConnManager().get_conn()
         sql_string = "select * from finance where code = \"%s\""%(code)
         cursor = conn.cursor()
         
@@ -98,8 +98,9 @@ class Store:
 
         return result
 
-    def get_exright_quotes(self, conn, code):
-        bonus = self.get_bonus(conn, code)
+    def get_exright_quotes(self, code):
+        conn = ConnManager().get_conn()
+        bonus = self.get_bonus(code)
         if len(bonus) > 0:
             bonus = bonus.set_index("exright_date")
             bonus = bonus.sort_index()

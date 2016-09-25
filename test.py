@@ -11,18 +11,20 @@ import os
 import tushare
 
 if __name__ == "__main__":
-    d = DBInitializer()
-    d.start()
+    #d = DBInitializer()
+    #d.start()
     #c = crawler.CrawlerForXueqiu()
     #print c.get_h_data("002174", "1989-01-01", "2016-09-11")
     #codes = s.get_all_stocks()
     #empty = []
-    #conn = MySQLdb.connect("127.0.0.1", "root", "root", "quant")
-    #s = Store()
-    #bonus = s.get_bonus(conn, "002174")
+    s = Store()
+    bonus = s.get_bonus("002174")
+    print bonus
+    finance = s.get_finance("002174")
+    print finance
     #print bonus
     #for code in codes:
-    #    trades = s.get_exright_quotes(conn, code)
+    #    trades = s.get_exright_quotes(code)
     #    if len(trades) == 0:
     #        empty.append(code)
     #        print code
