@@ -4,6 +4,7 @@ import datetime
 import threading
 import tushare
 import MySQLdb
+import pandas
 
 from .utils import StringUtils
 from conn_manager import ConnManager
@@ -77,7 +78,12 @@ class Collector:
         self.collect(date_string, source)
 
     def collect_stock_information(self):
-        stocks = tushare.get_stock_basics();
+        stocks = pandas.DataFrame()
+        try:
+            stocks = tushare.get_stock_basics()
+        except:
+            print "collect stock information error"
+            return
     
         conn = ConnManager.get_conn()
         cursor = conn.cursor()
