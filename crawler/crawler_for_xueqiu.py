@@ -117,7 +117,7 @@ class CrawlerForXueqiu:
                 csv_file.close()
 
                 result = pandas.read_csv(csv_path)
-                if len(result.date) > 0:
+                if len(result) > 0 and len(result.date) > 0:
                     date = result.date[len(result.date) - 1]
                     self.__update_cache_index(code, date)
                 else:
