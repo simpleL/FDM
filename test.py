@@ -11,17 +11,17 @@ import os
 import tushare
 
 if __name__ == "__main__":
-    #d = DBInitializer()
-    #d.start()
+    d = DBInitializer()
+    d.start()
     #c = crawler.CrawlerForXueqiu()
     #print c.get_h_data("002174", "1989-01-01", "2016-09-11")
     #codes = s.get_all_stocks()
     #empty = []
-    s = Store()
-    bonus = s.get_bonus("002174")
-    print bonus
-    finance = s.get_finance("002174")
-    print finance
+    #s = Store()
+    #bonus = s.get_bonus("002174")
+    #print bonus
+    #finance = s.get_finance("002174")
+    #print finance
     #print bonus
     #for code in codes:
     #    trades = s.get_exright_quotes(code)

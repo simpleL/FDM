@@ -167,7 +167,7 @@ class Collector:
     def collect_finance(self):
         codes = self.store.get_all_stocks()
     
-        ConnManager.get_conn()
+        conn = ConnManager.get_conn()
         cursor = conn.cursor()
         print "collect finance"
         
