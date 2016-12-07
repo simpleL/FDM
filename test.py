@@ -6,13 +6,14 @@ from consts import *
 from store import Store
 from collector import Collector
 from pref_service import PrefService
+from ui import UITool
 import MySQLdb
 import os
 import tushare
 
 if __name__ == "__main__":
-    d = DBInitializer()
-    d.start()
+    #d = DBInitializer()
+    #d.start()
     #c = crawler.CrawlerForXueqiu()
     #print c.get_h_data("002174", "1989-01-01", "2016-09-11")
     #codes = s.get_all_stocks()
@@ -42,3 +43,5 @@ if __name__ == "__main__":
     
     #c = crawler.CrawlerFor10JQKA()
     #print c.get_finance_data("002174")
+    tool = UITool()
+    tool.notify("hello", "i'll use this to notice sell and buy point")
