@@ -7,6 +7,7 @@ from store import Store
 from collector import Collector
 from pref_service import PrefService
 from ui import UITool
+from realtime_analyzer import RealTimeAnalyzer
 import MySQLdb
 import os
 import tushare
@@ -43,5 +44,7 @@ if __name__ == "__main__":
     
     #c = crawler.CrawlerFor10JQKA()
     #print c.get_finance_data("002174")
-    tool = UITool()
-    tool.notify("hello", "i'll use this to notice sell and buy point")
+    #tool = UITool()
+    #tool.notify("hello", "i'll use this to notice sell and buy point")
+    rta = RealTimeAnalyzer()
+    rta.run()
