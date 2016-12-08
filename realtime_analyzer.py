@@ -69,7 +69,7 @@ class RealTimeAnalyzer:
                 bonus_date = bonus.index[idx]
 
                 if bonus_date == today or (today > bonus_date and prev_day < bonus_date):
-                    last_close = cu.exright(bonus.iloc[bonus_index], last_close)["price"]
+                    last_close = cu.exright(bonus.iloc[idx], last_close)["price"]
 
             info["last_close"] = float(last_close)
 
