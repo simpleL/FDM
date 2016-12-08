@@ -41,7 +41,7 @@ class RealTimeAnalyzer:
             info = {}
 
             quotes = s.get_exright_quotes(code)
-            last_close = quotes.last_close[len(quotes) - 1]
+            last_close = quotes.close[len(quotes) - 1]
             info["last_close"] = float(last_close)
 
             print "last close of %s is %.2f"%(code, last_close)
@@ -74,10 +74,15 @@ class RealTimeAnalyzer:
 
     def __process_code(self, code, callTime):
         q = tushare.get_realtime_quotes(code)
-        print "\tprice\tamount\nprice\t%.2f\na5\t%.2f\t%d\na4\t%.2f\t%d\na3\t%.2f\t%d\na2\t%.2f\t%d\na1\t%.2f\t%d\n"\
-              "\nb1\t%.2f\t%d\nb2\t%.2f\t%d\nb3\t%.2f\t%d\nb4\t%.2f\t%d\nb5\t%.2f\t%d\n"%(
-                  q.price, q.a5_p, q.a5_v, q.a4_p, q.a4_v, q.a3_p, q.a3_v, q.a2_p, q.a2_v, q.a1_p, q.a1_v,
-                  q.b1_p, q.b1_v, q.b2_p, q.b2_v, q.b3_p, q.b3_v, q.b4_p, q.b4_v, q.b5_p, q.b5_v)
+
+        try:
+            print "\tprice\tamount\nprice\t%.2f\na5\t%.2f\t%d\na4\t%.2f\t%d\na3\t%.2f\t%d\na2\t%.2f\t%d\na1\t%.2f\t%d\n"\
+                  "\nb1\t%.2f\t%d\nb2\t%.2f\t%d\nb3\t%.2f\t%d\nb4\t%.2f\t%d\nb5\t%.2f\t%d\n"%(
+                        q.price, q.a5_p, q.a5_v, q.a4_p, q.a4_v, q.a3_p, q.a3_v, q.a2_p, q.a2_v, q.a1_p, q.a1_v,
+                        q.b1_p, q.b1_v, q.b2_p, q.b2_v, q.b3_p, q.b3_v, q.b4_p, q.b4_v, q.b5_p, q.b5_v)
+        except:
+            print "error data, will retry later..."
+            return
 
         info = self.__code_data[code]
         last_close = info["last_close"]
