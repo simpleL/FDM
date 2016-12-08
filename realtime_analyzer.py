@@ -4,8 +4,10 @@ import math
 import time
 import tushare
 
-from ui import UITool
+from conn_manager import ConnManager
 from store import Store
+from ui import UITool
+from utils import CalcUtils
 
 class RealTimeAnalyzer:
     kUpdateInterval = 5
@@ -36,18 +38,48 @@ class RealTimeAnalyzer:
 
     def __init_codes(self):
         self.__code_data = {}
+        conn = ConnManager.get_conn()
+        cursor = conn.cursor()
+        codes_to_remove = []
+
+        cu = CalcUtils()
         s = Store()
+        today = datetime.datetime.now().date()
+
         for code in self.__tracking_codes:
             info = {}
 
-            quotes = s.get_exright_quotes(code)
-            last_close = quotes.close[len(quotes) - 1]
+            sql = "select date, close from market where code = '%s' order by date desc limit 1"%(code)
+            cursor = conn.cursor()
+            cursor.execute(sql)
+            result = cursor.fetchall()
+
+            if len(result) < 1:
+                codes_to_remove.append(code)
+                continue
+
+            prev_day = result[0][0]
+            last_close = result[0][1]
+
+            bonus = s.get_bonus(code)
+            if len(bonus) > 0:
+                bonus = bonus.set_index("exright_date")
+                bonus = bonus.sort_index()
+                idx = len(bonus) - 1
+                bonus_date = bonus.index[idx]
+
+                if bonus_date == today or (today > bonus_date and prev_day < bonus_date):
+                    last_close = cu.exright(bonus.iloc[bonus_index], last_close)["price"]
+
             info["last_close"] = float(last_close)
 
             print "last close of %s is %.2f"%(code, last_close)
 
             self.__code_data[code] = info
 
+        for code in codes_to_remove:
+            print "remove new stock %s"%s(code)
+            self.__tracking_codes.remove(code)
 
     def __minus_to_seconds(self, time1, time2):
         return math.ceil((time1 - time2).total_seconds())
@@ -67,19 +99,25 @@ class RealTimeAnalyzer:
             return (RealTimeAnalyzer.kNoonClose, self.__minus_to_seconds(self.afternoonTradeStartTime, time))
         elif time < self.afternoonCallStartTime:
             return (RealTimeAnalyzer.kAfternoonTrade, RealTimeAnalyzer.kUpdateInterval)
-        elif time < self.afternoonClose:
+        elif time < self.afternoonTradeEndTime:
             return (RealTimeAnalyzer.kAfternoonCall, RealTimeAnalyzer.kUpdateInterval)
         else:
             return (RealTimeAnalyzer.kAfternoonClose, 0)
+
+    def __print_quotes(self, q, callTime):
+        if callTime:
+            print "\tprice\tamount\na1\t%.2f%d\nb1\t%.2f%d\n"%(q.a1_p, q.a1_v, q.b1_p, q.b1_v)
+        else:
+            print "\tprice\tamount\nprice\t%.2f\na5\t%.2f\t%d\na4\t%.2f\t%d\na3\t%.2f\t%d\na2\t%.2f\t%d\na1\t%.2f\t%d\n"\
+                  "\nb1\t%.2f\t%d\nb2\t%.2f\t%d\nb3\t%.2f\t%d\nb4\t%.2f\t%d\nb5\t%.2f\t%d\n"%(
+                        q.price, q.a5_p, q.a5_v, q.a4_p, q.a4_v, q.a3_p, q.a3_v, q.a2_p, q.a2_v, q.a1_p, q.a1_v,
+                        q.b1_p, q.b1_v, q.b2_p, q.b2_v, q.b3_p, q.b3_v, q.b4_p, q.b4_v, q.b5_p, q.b5_v)
 
     def __process_code(self, code, callTime):
         q = tushare.get_realtime_quotes(code)
 
         try:
-            print "\tprice\tamount\nprice\t%.2f\na5\t%.2f\t%d\na4\t%.2f\t%d\na3\t%.2f\t%d\na2\t%.2f\t%d\na1\t%.2f\t%d\n"\
-                  "\nb1\t%.2f\t%d\nb2\t%.2f\t%d\nb3\t%.2f\t%d\nb4\t%.2f\t%d\nb5\t%.2f\t%d\n"%(
-                        q.price, q.a5_p, q.a5_v, q.a4_p, q.a4_v, q.a3_p, q.a3_v, q.a2_p, q.a2_v, q.a1_p, q.a1_v,
-                        q.b1_p, q.b1_v, q.b2_p, q.b2_v, q.b3_p, q.b3_v, q.b4_p, q.b4_v, q.b5_p, q.b5_v)
+            self.__print_quotes(q, callTime)
         except:
             print "error data, will retry later..."
             return
