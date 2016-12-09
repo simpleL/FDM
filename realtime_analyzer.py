@@ -106,7 +106,7 @@ class RealTimeAnalyzer:
 
     def __print_quotes(self, q, callTime):
         if callTime:
-            print "\tprice\tamount\na1\t%.2f%d\nb1\t%.2f%d\n"%(q.a1_p, q.a1_v, q.b1_p, q.b1_v)
+            print "\tprice\tamount\na1\t%.2f\t%d\nb1\t%.2f\t%d\n"%(q.a1_p, q.a1_v, q.b1_p, q.b1_v)
         else:
             print "\tprice\tamount\nprice\t%.2f\na5\t%.2f\t%d\na4\t%.2f\t%d\na3\t%.2f\t%d\na2\t%.2f\t%d\na1\t%.2f\t%d\n"\
                   "\nb1\t%.2f\t%d\nb2\t%.2f\t%d\nb3\t%.2f\t%d\nb4\t%.2f\t%d\nb5\t%.2f\t%d\n"%(
