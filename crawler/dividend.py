@@ -28,6 +28,9 @@ def get_dividend(code):
     
     html = sp.fromstring(r.content)
     dom = html.xpath("//table[@id=\"sharebonus_1\"]/tbody")
+
+    if len(dom) == 0:
+        return res
     
     td_count = 0
     for element in dom[0].iter():
