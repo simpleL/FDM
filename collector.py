@@ -1,11 +1,12 @@
 # -*- coding:utf-8 -*- 
 
+import MySQLdb
 import datetime
+import pandas
 import threading
 import tushare
-import MySQLdb
-import pandas
 
+from .utils import CalcUtils
 from .utils import StringUtils
 from conn_manager import ConnManager
 from consts import *
@@ -91,6 +92,7 @@ class Collector:
         insert_list = [];
     
         su = StringUtils()
+        cu = CalcUtils()
         for code in stocks.index:
             stock = stocks.loc[code]
             query_sql = "select * from stock_information where code = '" + code + "'"
@@ -109,17 +111,20 @@ class Collector:
             count = cursor.execute(query_sql)
             if (count > 0):
                 param = (su.get_string(stock["name"]), su.get_string(stock.industry),
-                         su.get_string(stock.area), stock.outstanding * 10000,
-                         stock.totals * 10000, stock.pe, stock.pb, code)
+                         su.get_string(stock.area), cu.trim_float(stock.outstanding * 10000),
+                         cu.trim_float(stock.totals * 10000), cu.trim_float(stock.pe),
+                         cu.trim_float(stock.pb), code)
                 #print param
                 update_list.append(param)
             else:
                 param = (code, su.get_string(stock["name"]),
                          su.get_string(stock.industry), su.get_string(stock.area),
-                         stock.outstanding * 10000, stock.totals * 10000, stock.pe, stock.pb)
+                         cu.trim_float(stock.outstanding * 10000), cu.trim_float(stock.totals * 10000),
+                         cu.trim_float(stock.pe), cu.trim_float(stock.pb))
                 insert_list.append(param)
     
         if (len(insert_list) != 0):
+            print insert_list
             cursor.executemany(insert_sql, insert_list)
             conn.commit()
         if (len(update_list) != 0):

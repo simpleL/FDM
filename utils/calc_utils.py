@@ -58,3 +58,8 @@ class CalcUtils:
         factor = price / float(last_close)
 
         return {"price": price, "factor": factor}
+
+    def trim_float(cls, value):
+        if type(value) != int and type(value) != float:
+            return 0
+        return math.ceil(value * 100) / 100.
