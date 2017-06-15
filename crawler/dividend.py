@@ -8,7 +8,7 @@ import HTMLParser
 
 def get_dividend(code):
     request_url = "http://money.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/{code}.phtml".format(code = code)
-    retry_count = 3
+    retry_count = 10
     content = ""
     success = False
     for i in range(0, retry_count):
