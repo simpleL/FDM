@@ -3,6 +3,7 @@ import crawler
 from . import DBInitializer
 from analyzer import *
 from consts import *
+from crawler import *
 from store import Store
 from collector import Collector
 from pref_service import PrefService
@@ -13,6 +14,7 @@ import os
 import tushare
 
 if __name__ == "__main__":
+    #print get_dividend("600000")
     d = DBInitializer()
     d.start()
     #c = crawler.CrawlerForXueqiu()

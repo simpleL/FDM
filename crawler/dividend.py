@@ -13,7 +13,7 @@ def get_dividend(code):
     success = False
     for i in range(0, retry_count):
         try:
-            r = requests.get(request_url, timeout = 3)
+            r = requests.get(request_url, timeout = 30)
         except:
             print "getting %s dividend timeout..."%(code)
         else:
@@ -25,8 +25,20 @@ def get_dividend(code):
                             "bonus_stock": [], "tranadd_stock": []})
     if len(content) == 0:
         return res
+
+    #fix html
+    head_start = content.find("thead")
+    head_end = content.find("/thead")
+    if head_start == -1 or head_end == -1 or head_start >= head_end:
+        return res
     
-    html = sp.fromstring(r.content)
+    head = content[head_start:head_end]
+    fixed_head = head.replace("/td", "/th")
+    content = content.replace(head, fixed_head)
+
+    html = sp.fromstring(content)
+
+
     dom = html.xpath("//table[@id=\"sharebonus_1\"]/tbody")
 
     if len(dom) == 0:
