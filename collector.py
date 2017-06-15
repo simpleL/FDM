@@ -124,7 +124,6 @@ class Collector:
                 insert_list.append(param)
     
         if (len(insert_list) != 0):
-            print insert_list
             cursor.executemany(insert_sql, insert_list)
             conn.commit()
         if (len(update_list) != 0):
